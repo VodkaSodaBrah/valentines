@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Valentine Protocol</title>
   <style>
-    *{ box-sizing: border-box; }
+    *{ box-sizing: border-box; margin: 0; }
+    html{
+      background: #e8507a;
+    }
 
     @keyframes gradientShift {
       0%   { background-position: 0% 50%; }
@@ -14,10 +17,10 @@
     }
 
     @keyframes floatHeart {
-      0%   { transform: translateY(0) rotate(0deg); opacity: 0.22; }
-      25%  { transform: translateY(-18vh) rotate(8deg); opacity: 0.18; }
-      50%  { transform: translateY(-36vh) rotate(-5deg); opacity: 0.12; }
-      75%  { transform: translateY(-54vh) rotate(10deg); opacity: 0.08; }
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.28; }
+      25%  { transform: translateY(-18vh) rotate(8deg); opacity: 0.22; }
+      50%  { transform: translateY(-36vh) rotate(-5deg); opacity: 0.15; }
+      75%  { transform: translateY(-54vh) rotate(10deg); opacity: 0.10; }
       100% { transform: translateY(-72vh) rotate(0deg); opacity: 0; }
     }
 
@@ -49,15 +52,16 @@
     }
 
     body{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      background: linear-gradient(135deg, #0b1020, #1a0a2e, #0d1a2d, #0b1020);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(135deg, #ff6b8a, #c94b7c, #ff9ab2, #e8507a);
       background-size: 400% 400%;
       animation: gradientShift 20s ease infinite;
-      color:#e7e7e7;
+      color:#4a1028;
       margin:0;
+      width:100%;
       min-height:100vh;
       min-height:100dvh;
-      display:grid; place-items:center;
+      display:grid; place-items:center; justify-content:center;
       padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
       overflow:hidden;
     }
@@ -85,6 +89,10 @@
     .hearts-container span:nth-child(6) { left: 72%; font-size: 18px; animation-duration: 13s; animation-delay: 5s; }
     .hearts-container span:nth-child(7) { left: 85%; font-size: 24px; animation-duration: 17s; animation-delay: 7s; }
     .hearts-container span:nth-child(8) { left: 95%; font-size: 20px; animation-duration: 15s; animation-delay: 6s; }
+    .hearts-container span:nth-child(9) { left: 10%; font-size: 22px; animation-duration: 16s; animation-delay: 8s; }
+    .hearts-container span:nth-child(10) { left: 35%; font-size: 26px; animation-duration: 19s; animation-delay: 1.5s; }
+    .hearts-container span:nth-child(11) { left: 65%; font-size: 18px; animation-duration: 14s; animation-delay: 4.5s; }
+    .hearts-container span:nth-child(12) { left: 80%; font-size: 24px; animation-duration: 17s; animation-delay: 9s; }
 
     .wrap{
       width:min(780px, 96vw);
@@ -93,11 +101,11 @@
       z-index: 1;
     }
     .card{
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.6);
       border-radius: 16px;
       padding: 18px 18px 14px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+      box-shadow: 0 18px 50px rgba(180,50,80,0.2);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       animation: cardEntrance 0.8s ease-out both;
@@ -106,11 +114,11 @@
       animation-delay: 0.15s;
     }
 
-    h1{ margin:0 0 8px; font-size:18px; }
+    h1{ margin:0 0 8px; font-size:18px; color:#8b1a4a; }
     .sub{
       margin:0 0 14px;
-      color: rgba(231,231,231,0.8);
-      line-height:1.35; font-size:14px;
+      color: rgba(74,16,40,0.75);
+      line-height:1.4; font-size:21px;
     }
     .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
     button{
@@ -124,7 +132,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     #yes{
-      background:#ff4d6d; color:#fff;
+      background: linear-gradient(135deg, #ff4d6d, #ff6b8a); color:#fff;
       position: relative;
       animation: pulseGlow 2s ease-in-out infinite;
     }
@@ -132,27 +140,28 @@
       animation: none;
     }
     #no{
-      background: rgba(255,255,255,0.14);
-      color:#e7e7e7;
+      background: rgba(255,255,255,0.35);
+      color:#8b1a4a;
       transition: transform 0.2s ease, opacity 0.3s ease;
     }
-    #no:disabled, #yes:disabled{ opacity:0.6; cursor:not-allowed; }
+    #no:disabled, #yes:disabled{ opacity:0.5; cursor:not-allowed; }
 
     .tag{
       display:inline-block;
       padding:2px 8px;
       border-radius:999px;
       font-size:12px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,150,180,0.4);
       margin-left:8px;
-      color: rgba(231,231,231,0.85);
+      color: #8b1a4a;
       transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .log{
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.10);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(60,10,30,0.85);
+      border: 1px solid rgba(255,150,180,0.25);
       border-radius: 14px;
       padding: 12px;
       height: clamp(160px, 36vh, 340px);
@@ -161,31 +170,40 @@
       line-height:1.35;
       font-size:13px;
     }
-    .ok { color:#7CFFB2; }
+    .ok { color:#ff8fab; }
     .warn { color:#ffd166; }
-    .err { color:#ff6b6b; }
-    .muted { color: rgba(231,231,231,0.65); }
+    .err { color:#ff4d6d; }
+    .muted { color: rgba(255,200,210,0.6); }
 
     .successBox{
       display:none;
       margin-top:12px;
       padding:12px;
       border-radius:14px;
-      border: 1px solid rgba(124,255,178,0.35);
-      background: rgba(124,255,178,0.10);
+      border: 1px solid rgba(200,50,100,0.3);
+      background: rgba(255,220,230,0.6);
+      color: #4a1028;
     }
+    .successBox .ok { color:#8b1a4a; }
+    .successBox .muted { color: rgba(74,16,40,0.7); }
+
+    .card > .row .muted { color: rgba(74,16,40,0.6); }
   </style>
 </head>
 <body>
   <div class="hearts-container" aria-hidden="true">
-    <span>&#10084;</span>
-    <span>&#10084;</span>
-    <span>&#10084;</span>
-    <span>&#10084;</span>
-    <span>&#10084;</span>
-    <span>&#10084;</span>
-    <span>&#10084;</span>
-    <span>&#10084;</span>
+    <span>&#128152;</span>
+    <span>&#128144;</span>
+    <span>&#128140;</span>
+    <span>&#128536;</span>
+    <span>&#127993;</span>
+    <span>&#128149;</span>
+    <span>&#128151;</span>
+    <span>&#127801;</span>
+    <span>&#128152;</span>
+    <span>&#128149;</span>
+    <span>&#128140;</span>
+    <span>&#128151;</span>
   </div>
 
   <div class="wrap" id="wrap">
@@ -193,8 +211,8 @@
       <h1>Valentine Protocol v1.2 <span class="tag" id="statusTag">STATUS: pending</span></h1>
       <p class="sub">
         Dear Wife,<br/>
-        Please confirm you will be my Valentine.<br/>
-        (If "No" is clicked, the UI may become petty.)
+        My dearest and loving wife, will you do me the honor of being my Valentine? Te amo muucho!.<br/>
+        (If "No" is clicked, the program might get mad and want to fight.)
       </p>
 
       <div class="row" id="buttonRow">
@@ -206,7 +224,7 @@
       <div class="successBox" id="successBox">
         <div class="ok"><strong>&#10004; ACCEPTED.</strong> Valentine successfully deployed.</div>
         <div class="muted" style="margin-top:6px;">
-          No gifts this year&#8212;just me, choosing you, and unlimited hugs. &#10084;&#65039;
+          This year&#8212;just me, choosing you, and unlimited hugs. &#10084;&#65039;
         </div>
       </div>
     </div>
@@ -433,8 +451,8 @@
       triggerShake();
 
       statusTag.textContent = "STATUS: failing (but romantic)";
-      statusTag.style.background = "rgba(255,107,107,0.12)";
-      statusTag.style.borderColor = "rgba(255,107,107,0.35)";
+      statusTag.style.background = "rgba(255,77,109,0.2)";
+      statusTag.style.borderColor = "rgba(255,77,109,0.5)";
 
       write(`[${ts()}] user_action: clicked "No"`, "warn");
       await sleep(150);
@@ -525,8 +543,8 @@
       stopYesDodge(false);
 
       statusTag.textContent = "STATUS: accepted";
-      statusTag.style.background = "rgba(124,255,178,0.12)";
-      statusTag.style.borderColor = "rgba(124,255,178,0.35)";
+      statusTag.style.background = "rgba(255,143,175,0.25)";
+      statusTag.style.borderColor = "rgba(255,143,175,0.5)";
 
       write(`\n[${ts()}] SUCCESS: Valentine accepted (verified x${yesAttempt + 1})`, "ok");
       write(`[${ts()}] DEPLOY: hugs_and_kisses@latest`, "ok");
@@ -536,6 +554,12 @@
       noBtn.disabled = true;
       yesBtn.disabled = true;
       tip.textContent = "Locked in. Happy Valentine's Day.";
+
+      // Notify via ntfy
+      fetch("https://ntfy.sh/valentines-mchildress44woo", {
+        method: "POST",
+        body: "She said YES! Valentine accepted (verified x" + (yesAttempt + 1) + ") after " + attempt + " No click(s)."
+      }).catch(() => {});
     }
 
     yesBtn.addEventListener('click', accept);
