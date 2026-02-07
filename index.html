@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Valentine Protocol</title>
+  <style>
+    *{ box-sizing: border-box; }
+
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes floatHeart {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.22; }
+      25%  { transform: translateY(-18vh) rotate(8deg); opacity: 0.18; }
+      50%  { transform: translateY(-36vh) rotate(-5deg); opacity: 0.12; }
+      75%  { transform: translateY(-54vh) rotate(10deg); opacity: 0.08; }
+      100% { transform: translateY(-72vh) rotate(0deg); opacity: 0; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(255,77,109,0.4), 0 0 20px rgba(255,77,109,0.15); }
+      50%      { box-shadow: 0 0 14px rgba(255,77,109,0.6), 0 0 36px rgba(255,77,109,0.25); }
+    }
+
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes screenShake {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      10%  { transform: translateX(-4px) rotate(-0.5deg); }
+      20%  { transform: translateX(4px) rotate(0.5deg); }
+      30%  { transform: translateX(-6px) rotate(-0.8deg); }
+      40%  { transform: translateX(6px) rotate(0.8deg); }
+      50%  { transform: translateX(-4px) rotate(-0.5deg); }
+      60%  { transform: translateX(4px) rotate(0.5deg); }
+      70%  { transform: translateX(-2px) rotate(-0.3deg); }
+      80%  { transform: translateX(2px) rotate(0.3deg); }
+      90%  { transform: translateX(-1px) rotate(0); }
+    }
+
+    .shake {
+      animation: screenShake 0.5s ease-in-out;
+    }
+
+    body{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: linear-gradient(135deg, #0b1020, #1a0a2e, #0d1a2d, #0b1020);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      color:#e7e7e7;
+      margin:0;
+      min-height:100vh;
+      min-height:100dvh;
+      display:grid; place-items:center;
+      padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+      overflow:hidden;
+    }
+
+    .hearts-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .hearts-container span {
+      position: absolute;
+      bottom: -10vh;
+      font-size: 24px;
+      opacity: 0;
+      animation: floatHeart linear infinite;
+    }
+    .hearts-container span:nth-child(1) { left: 5%;  font-size: 20px; animation-duration: 14s; animation-delay: 0s; }
+    .hearts-container span:nth-child(2) { left: 15%; font-size: 28px; animation-duration: 18s; animation-delay: 2s; }
+    .hearts-container span:nth-child(3) { left: 28%; font-size: 16px; animation-duration: 12s; animation-delay: 4s; }
+    .hearts-container span:nth-child(4) { left: 42%; font-size: 22px; animation-duration: 16s; animation-delay: 1s; }
+    .hearts-container span:nth-child(5) { left: 58%; font-size: 26px; animation-duration: 20s; animation-delay: 3s; }
+    .hearts-container span:nth-child(6) { left: 72%; font-size: 18px; animation-duration: 13s; animation-delay: 5s; }
+    .hearts-container span:nth-child(7) { left: 85%; font-size: 24px; animation-duration: 17s; animation-delay: 7s; }
+    .hearts-container span:nth-child(8) { left: 95%; font-size: 20px; animation-duration: 15s; animation-delay: 6s; }
+
+    .wrap{
+      width:min(780px, 96vw);
+      display:grid; gap:14px;
+      position: relative;
+      z-index: 1;
+    }
+    .card{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 18px 18px 14px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      animation: cardEntrance 0.8s ease-out both;
+    }
+    .card:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    h1{ margin:0 0 8px; font-size:18px; }
+    .sub{
+      margin:0 0 14px;
+      color: rgba(231,231,231,0.8);
+      line-height:1.35; font-size:14px;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    button{
+      border:0; border-radius:999px;
+      padding:12px 20px;
+      min-height:44px;
+      min-width:44px;
+      font-weight:700;
+      cursor:pointer; font-size:15px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #yes{
+      background:#ff4d6d; color:#fff;
+      position: relative;
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+    #yes:disabled {
+      animation: none;
+    }
+    #no{
+      background: rgba(255,255,255,0.14);
+      color:#e7e7e7;
+      transition: transform 0.2s ease, opacity 0.3s ease;
+    }
+    #no:disabled, #yes:disabled{ opacity:0.6; cursor:not-allowed; }
+
+    .tag{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      margin-left:8px;
+      color: rgba(231,231,231,0.85);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .log{
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 12px;
+      height: clamp(160px, 36vh, 340px);
+      overflow:auto;
+      white-space: pre-wrap;
+      line-height:1.35;
+      font-size:13px;
+    }
+    .ok { color:#7CFFB2; }
+    .warn { color:#ffd166; }
+    .err { color:#ff6b6b; }
+    .muted { color: rgba(231,231,231,0.65); }
+
+    .successBox{
+      display:none;
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border: 1px solid rgba(124,255,178,0.35);
+      background: rgba(124,255,178,0.10);
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts-container" aria-hidden="true">
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+    <span>&#10084;</span>
+  </div>
+
+  <div class="wrap" id="wrap">
+    <div class="card">
+      <h1>Valentine Protocol v1.2 <span class="tag" id="statusTag">STATUS: pending</span></h1>
+      <p class="sub">
+        Dear Wife,<br/>
+        Please confirm you will be my Valentine.<br/>
+        (If "No" is clicked, the UI may become petty.)
+      </p>
+
+      <div class="row" id="buttonRow">
+        <button id="yes">Yes &#128150;</button>
+        <button id="no">No &#128528;</button>
+        <span class="muted" id="tip">Tip: everything is normal right now &#128519;</span>
+      </div>
+
+      <div class="successBox" id="successBox">
+        <div class="ok"><strong>&#10004; ACCEPTED.</strong> Valentine successfully deployed.</div>
+        <div class="muted" style="margin-top:6px;">
+          No gifts this year&#8212;just me, choosing you, and unlimited hugs. &#10084;&#65039;
+        </div>
+      </div>
+    </div>
+
+    <div class="log card" id="log" aria-label="Console log"></div>
+  </div>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const yesBtn = document.getElementById('yes');
+    const noBtn  = document.getElementById('no');
+    const statusTag = document.getElementById('statusTag');
+    const tip = document.getElementById('tip');
+    const successBox = document.getElementById('successBox');
+    const wrapEl = document.getElementById('wrap');
+
+    let attempt = 0;
+    let running = false;
+    let accepted = false;
+    let yesAttempt = 0;
+
+    // YES dodge behavior
+    let yesDodging = false;
+    let yesDodgeTimer = null;
+    let yesTeleportBackTimer = null;
+    let yesHasEverDodged = false;
+
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    function ts(){
+      const d = new Date();
+      const pad = (n) => String(n).padStart(2,'0');
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function write(line, cls=""){
+      const span = document.createElement('span');
+      if (cls) span.className = cls;
+      span.textContent = line + "\n";
+      logEl.appendChild(span);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function banner(){
+      logEl.textContent = "";
+      write(">>> booting valentine-protocol...", "muted");
+      write(">>> initializing romance-engine...", "muted");
+      write(">>> checking dependencies: [love, patience, snacks] ...", "muted");
+      write("OK: dependency 'love' resolved", "ok");
+      write("OK: dependency 'wife' detected", "ok");
+      write("WARN: budget=0 detected (still proceeding)", "warn");
+      write("READY: awaiting user input...\n", "muted");
+    }
+
+    // Detect iOS for safe area dodge padding
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    function dodgeYes(){
+      const topPad = isIOS ? 60 : 10;
+      const bottomPad = isIOS ? 40 : 10;
+      const sidePad = 10;
+      const maxX = window.innerWidth  - yesBtn.offsetWidth  - sidePad;
+      const maxY = window.innerHeight - yesBtn.offsetHeight - bottomPad;
+      const x = Math.max(sidePad, Math.floor(Math.random() * Math.max(1, maxX)));
+      const y = Math.max(topPad, Math.floor(Math.random() * Math.max(1, maxY)));
+      yesBtn.style.left = x + 'px';
+      yesBtn.style.top  = y + 'px';
+    }
+
+    function startYesDodge(){
+      if (accepted || yesDodging) return;
+      yesDodging = true;
+      yesHasEverDodged = true;
+
+      // Escape layout
+      yesBtn.style.position = 'fixed';
+      yesBtn.style.zIndex = 9999;
+      yesBtn.style.animation = 'none'; // disable glow while dodging
+
+      tip.textContent = "You pressed No\u2026 now chase the Yes button.";
+      write(`[${ts()}] WARN: UI entered petty mode \u2014 "Yes" is evasive`, "warn");
+
+      dodgeYes();
+
+      // Dodge interval escalates with attempts
+      const dodgeInterval = Math.max(120, 380 - attempt * 60);
+
+      if (yesDodgeTimer) clearInterval(yesDodgeTimer);
+      yesDodgeTimer = setInterval(() => {
+        if (!accepted) dodgeYes();
+      }, dodgeInterval);
+
+      // Dodge duration escalates with attempts
+      const dodgeDuration = 10000 + attempt * 3000;
+
+      if (yesTeleportBackTimer) clearTimeout(yesTeleportBackTimer);
+      yesTeleportBackTimer = setTimeout(() => {
+        if (!accepted) {
+          stopYesDodge(true);
+        }
+      }, dodgeDuration);
+    }
+
+    function stopYesDodge(teleport=false){
+      yesDodging = false;
+      if (yesDodgeTimer) clearInterval(yesDodgeTimer);
+      yesDodgeTimer = null;
+      if (yesTeleportBackTimer) clearTimeout(yesTeleportBackTimer);
+      yesTeleportBackTimer = null;
+
+      // Put it back
+      yesBtn.style.position = 'relative';
+      yesBtn.style.left = '';
+      yesBtn.style.top  = '';
+      yesBtn.style.zIndex = '';
+      yesBtn.style.animation = '';
+
+      if (teleport){
+        write(`[${ts()}] INFO: "Yes" stopped running (you win)`, "ok");
+        tip.textContent = "Okay okay\u2026 you can click Yes now.";
+      }
+    }
+
+    // When dodging, make it extra slippery on hover/touch
+    yesBtn.addEventListener('mouseenter', () => {
+      if (yesDodging && !accepted) dodgeYes();
+    });
+    yesBtn.addEventListener('touchstart', (e) => {
+      if (yesDodging && !accepted) {
+        e.preventDefault();
+        dodgeYes();
+      }
+    }, { passive:false });
+
+    // Touch proximity dodge: finger within 60px triggers dodge
+    let lastProximityDodge = 0;
+    document.addEventListener('touchmove', (e) => {
+      if (!yesDodging || accepted) return;
+      const now = Date.now();
+      if (now - lastProximityDodge < 200) return; // throttle to 5Hz
+      const touch = e.touches[0];
+      if (!touch) return;
+      const rect = yesBtn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = touch.clientX - cx;
+      const dy = touch.clientY - cy;
+      if (Math.sqrt(dx*dx + dy*dy) < 60) {
+        lastProximityDodge = now;
+        dodgeYes();
+      }
+    }, { passive: true });
+
+    const errorLines = [
+      () => `ERROR: Valentine not accepted (code: VLTN_${100 + attempt})`,
+      () => `WARN: initiating retry strategy: "be extra cute"`,
+      () => `INFO: compiling compliments...`,
+      () => `INFO: linking module: wife_is_my_favorite_person`,
+      () => `WARN: confidence overflow detected`,
+      () => `ERROR: "No" response is not supported in this build`,
+      () => `INFO: opening support ticket with Cupid (priority: HIGH)`,
+      () => `WARN: escalating to: puppy-eyes.exe`,
+      () => `INFO: retry scheduled in ${Math.max(150, 900 - attempt * 80)}ms`,
+      () => `ERROR: state mismatch: expected "Yes", received "No"`,
+      () => `INFO: attempting auto-heal...`,
+      () => `FATAL: romantic_core dumped (segfault at 0xDEADBEEF)`,
+      () => `ERROR: unhandled rejection in Promise.ring()`,
+      () => `ERROR: cannot read property 'love' of undefined`,
+      () => `INFO: sudo make me_a_valentine --force`,
+      () => `FATAL: kernel panic - not synced: too many feelings`,
+      () => `ERROR: git push rejected: requires --force-with-love`,
+      () => `WARN: memory leak in feelings_allocator (unreclaimable)`,
+      () => `ERROR: 404 Not Found: valentine_response.yes`,
+      () => `INFO: deploying emotional_support_v2.patch...`,
+      () => `WARN: heart_rate_monitor spiking (probable cause: rejection)`,
+      () => `ERROR: connection refused by port 14 (Valentine's port)`,
+      () => `FATAL: stack overflow in recursive_begging()`,
+      () => `INFO: rollback initiated on dignity.dll`,
+      () => `ERROR: assertion failed: she_said == "yes" (actual: "no")`,
+    ];
+
+    const sweetEscalations = [
+      "patch note: you're my favorite human.",
+      "patch note: I still get butterflies.",
+      "patch note: I'd choose you in every timeline.",
+      "patch note: thanks for doing life with me.",
+      "patch note: you're my home.",
+    ];
+
+    const alertMessages = [
+      "Are you sure? I made this just for you...",
+      "Okay, that one hurt a little. Try again?",
+      "I'm not mad, just disappointed. And a little mad.",
+      "The app is literally begging you. BEGGING.",
+      "Fine. I'll just sit here. In the dark. Alone. It's fine.",
+    ];
+
+    const tipMessages = [
+      "Tip: everything is normal right now",
+      "The Yes button is watching you...",
+      "Warning: annoyance levels rising",
+      "Petty mode: ENGAGED",
+      "Please... just click Yes. I'm begging.",
+    ];
+
+    function triggerShake() {
+      wrapEl.classList.remove('shake');
+      void wrapEl.offsetWidth; // reflow to re-trigger animation
+      wrapEl.classList.add('shake');
+    }
+
+    async function runChaos(){
+      if (running || accepted) return;
+      running = true;
+
+      attempt++;
+
+      // Shrink No button
+      const scale = Math.max(0.4, 1 - attempt * 0.15);
+      noBtn.style.transform = `scale(${scale})`;
+
+      // Screen shake
+      triggerShake();
+
+      statusTag.textContent = "STATUS: failing (but romantic)";
+      statusTag.style.background = "rgba(255,107,107,0.12)";
+      statusTag.style.borderColor = "rgba(255,107,107,0.35)";
+
+      write(`[${ts()}] user_action: clicked "No"`, "warn");
+      await sleep(150);
+
+      // Start YES dodge only after first No
+      startYesDodge();
+
+      // More lines, faster speed
+      const linesToPrint = 10 + Math.min(20, attempt * 4);
+      for (let i = 0; i < linesToPrint; i++){
+        if (accepted) break;
+        const pick = errorLines[Math.floor(Math.random() * errorLines.length)];
+        const delay = Math.max(35, 180 - attempt * 20);
+        const cls = (i % 3 === 0) ? "err" : (i % 3 === 1 ? "warn" : "muted");
+        write(`[${ts()}] ${pick()}`, cls);
+        await sleep(delay);
+      }
+
+      const sweet = sweetEscalations[(attempt - 1) % sweetEscalations.length];
+      write(`[${ts()}] INFO: ${sweet}`, "ok");
+      await sleep(160);
+
+      // Fire guilt-trip alert after a short delay so error spam is visible behind it
+      const alertIdx = Math.min(attempt - 1, alertMessages.length - 1);
+      setTimeout(() => {
+        if (!accepted) alert(alertMessages[alertIdx]);
+      }, 300);
+
+      if (attempt >= 4){
+        noBtn.disabled = true;
+        noBtn.textContent = "Nope (banned)";
+        write(`[${ts()}] WARN: "No" button rate-limited (too powerful)`, "warn");
+        write(`[${ts()}] INFO: Please use the supported option: "Yes"`, "muted");
+        tip.textContent = yesDodging
+          ? "No disabled. Yes is still running\u2026 for now"
+          : "No disabled for stability. Please click Yes";
+      } else {
+        write(`[${ts()}] INFO: awaiting input...`, "muted");
+        const tipIdx = Math.min(attempt, tipMessages.length - 1);
+        tip.textContent = yesDodging
+          ? "Chase the Yes button\u2026"
+          : tipMessages[tipIdx];
+      }
+
+      running = false;
+    }
+
+    const yesGates = [
+      {
+        log: "WARN: accept() called without confirmation flag",
+        tip: "Are you sure? This is a legally binding valentine contract.",
+        alert: "Whoa, hold on. Are you sure?\n\nThis is a binding contract. Click Yes again to confirm.",
+        btn: "Yes, I'm sure"
+      },
+      {
+        log: "WARN: fool me once, shame on you\u2026 verifying sincerity",
+        tip: "Fool me once, shame on you. Click again. Mean it this time.",
+        alert: "Fool me once, shame on you.\nFool me twice, shame on me.\n\nClick Yes ONE more time to make it official.",
+        btn: "Yes, for real"
+      }
+    ];
+
+    function accept(){
+      if (accepted) return;
+
+      // If yes is still dodging, it refuses
+      if (yesDodging){
+        write(`[${ts()}] ERROR: click rejected \u2014 "Yes" is currently in evasive mode`, "err");
+        tip.textContent = "Not yet. Wait\u2026 it'll give up soon.";
+        dodgeYes();
+        return;
+      }
+
+      // Escalating confirmation gates
+      if (yesAttempt < yesGates.length) {
+        const gate = yesGates[yesAttempt];
+        yesAttempt++;
+        write(`[${ts()}] ${gate.log}`, "warn");
+        tip.textContent = gate.tip;
+        yesBtn.textContent = gate.btn;
+        setTimeout(() => {
+          if (!accepted) alert(gate.alert);
+        }, 200);
+        return;
+      }
+
+      accepted = true;
+      stopYesDodge(false);
+
+      statusTag.textContent = "STATUS: accepted";
+      statusTag.style.background = "rgba(124,255,178,0.12)";
+      statusTag.style.borderColor = "rgba(124,255,178,0.35)";
+
+      write(`\n[${ts()}] SUCCESS: Valentine accepted (verified x${yesAttempt + 1})`, "ok");
+      write(`[${ts()}] DEPLOY: hugs_and_kisses@latest`, "ok");
+      write(`[${ts()}] NOTE: I love you. End of log.`, "ok");
+
+      successBox.style.display = "block";
+      noBtn.disabled = true;
+      yesBtn.disabled = true;
+      tip.textContent = "Locked in. Happy Valentine's Day.";
+    }
+
+    yesBtn.addEventListener('click', accept);
+    noBtn.addEventListener('click', runChaos);
+
+    window.addEventListener('resize', () => {
+      if (yesDodging && !accepted) dodgeYes();
+    });
+
+    banner();
+  </script>
+</body>
+</html>
